@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define IOS ios_base::sync_with_stdio(0);cin.tie(0)
+#define infinite 9123456789
+#define PRECISION cout.precision(3); cout.setf(ios::fixed);
+
+int n, m, v, recebe[1010], acontece[1010], mat[1010][1010];
+vector<int> vertice[1010], raiz, source[1010];
+
+void bfs_ida(int x){
+	vector<int> jafoi(n+2);
+	queue<int> q;
+	jafoi[x]++;
+	source[x].push_back(x);
+	mat[x][x]++;
+	q.push(x);
+	while(q.size()!=0){
+		int u=q.front(); q.pop();
+		for(int i=0; i<vertice[u].size(); i++){
+			int v=vertice[u][i];
+			if(jafoi[v]==0){
+				jafoi[v]++;
+				source[v].push_back(x);
+				mat[v][x]++;
+				q.push(v);
+			}
+		}
+	}
+}
+
+void solve(){
+	cin >> n >> m >> v;
+	for(int i=1; i<=m; i++){
+		int a, b; cin >> a >> b;
+		vertice[a].push_back(b);
+		recebe[b]++;
+	}
+	for(int i=1; i<=n; i++) if(recebe[i]==0) bfs_ida(i);
+	for(int i=1; i<=n; i++) sort(source[i].begin(), source[i].end());
+	
+	/*for(int i=1; i<=n; i++){
+		for(int j=1; j<=n; j++) cout << mat[i][j] << " ";
+		cout << "\n";
+	}*/
+	for(int i=1; i<=v; i++){
+		int x; cin >> x;
+		acontece[x]++;
+		for(int j=1; j<=n; j++){
+			if(acontece[j]!=0) continue;
+			
+			bool vai=true;
+			for(int k=0; k<source[x].size(); k++){
+				int y=source[x][k];
+				//cout << y << "\n";
+				if(mat[j][y]==0) vai=false;
+			}
+			if(vai) acontece[j]++;
+		}
+	}
+	for(int i=1; i<=n; i++) if(acontece[i]) cout << i << " ";
+}
+signed main(){
+	solve();
+}
